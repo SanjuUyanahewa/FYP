@@ -98,7 +98,6 @@ void DataRead(){
 
 if(Serial.available()>0){
   String data= Serial.readString();
-  //Serial.println("input = "+data);
   String type = data.substring(0,1);
   int val= data.substring(2,4).toInt();
   int lmin = 10;
@@ -122,42 +121,30 @@ if(Serial.available()>0){
     int RMin =170;
     if (raw_ranger<15)
     {
-      //Serial.println("value <15 started");
       ranger=15-raw_ranger;
      if(raw_ranger<lastranger1)
      {
-      //Serial.println("Current> previus initiated");
-      ////Serial.println("L Current : "+String(Current_L_Angle));
-      //Serial.println("R Current : "+String(Current_R_Angle));
       int currentl =Current_L_Angle;
       int currentr =Current_R_Angle;
       roll_R_Up(currentl,currentr);
       }
      else
      {
-      //Serial.println("Current< previus initiated");
-      //Serial.println("L Current : "+String(Current_L_Angle));
-      //Serial.println("R Current : "+String(Current_R_Angle));
      int currentl =Current_L_Angle;
       int currentr =Current_R_Angle;
       roll_L_Up(currentl,currentr);
      }
      }
      else if (raw_ranger ==15){
-      //Serial.println("value ==15 started");
-      //Serial.println("L Current : "+String(Current_L_Angle));
-      //Serial.println("R Current : "+String(Current_R_Angle));
       int diffL=abs(Current_L_Angle-LMin);
       int diffR=abs(RMin-Current_R_Angle);
       int diff=diffL-diffR;
       if(diff<0){
-        //Serial.println("r>l  initiated");
          int current =Current_R_Angle;
         ranger=abs(diff);
         roll_R_Down(current);
         }
       else{
-        //Serial.println("diff >0  initiated");
         int current =Current_L_Angle;
         ranger=abs(diff);
         roll_L_Down(current);
@@ -165,22 +152,15 @@ if(Serial.available()>0){
       }
     else if(raw_ranger<30)
     { 
-      //Serial.println("value >15 started");
     ranger=raw_ranger-15;
     if(raw_ranger>lastranger2)
      {
-      //Serial.println("Current> previus initiated");
-      //Serial.println("L Current : "+String(Current_L_Angle));
-      //Serial.println("R Current : "+String(Current_R_Angle));
       int currentl =Current_L_Angle;
       int currentr =Current_R_Angle;
       roll_L_Up(currentl,currentr);
       }
      else
      {
-      //Serial.println("Current< previus initiated");
-      //Serial.println("L Current : "+String(Current_L_Angle));
-      //Serial.println("R Current : "+String(Current_R_Angle));
      int currentl =Current_L_Angle;
       int currentr =Current_R_Angle;
       roll_R_Up(currentl,currentr);
@@ -191,17 +171,11 @@ if(Serial.available()>0){
     }
   void P(int anglep){
       rangep=anglep;
-      //Serial.println("Range : "+String(rangep));
       diff=abs(rangep-lastrangep);
-      //Serial.println("Diff : "+String(diff));
       lmin=10+(lastrangep);
-      //Serial.println("Lmin : "+String(lmin));
       rmin=170-(lastrangep);
-      //Serial.println("Rmin : "+String(rmin));
-     /* lmaxp=lmin+diff;
-      //Serial.println("Lmax : "+String(lmaxp));
+      lmaxp=lmin+diff;
       rmaxp=rmin-diff;
-      //Serial.println("Rmax : "+String(rmaxp));*/
   if(rangep>lastrangep){
      int currentl =Current_L_Angle;
      int currentr =Current_R_Angle;
@@ -237,8 +211,6 @@ if(Serial.available()>0){
       ranger=25;
       synchro();
       }
-
-    
     }
 int angle(int angle){
     int pos=map(angle,0,180,10,430);
@@ -252,9 +224,6 @@ void roll_R_Down(int current){unsigned int Pos;
       break;}
     HCPCA9685.Servo(right, angle(current+Pos));
     delay(dcontrol2(ranger,Pos));
-    //Serial.println(dcontrol2(ranger,Pos));
-    //delay(1000);
-    //Serial.println("R theta : "+String(current+Pos));
    }
    Current_R_Angle=current+Pos;
    }
@@ -266,9 +235,6 @@ void roll_L_Down(int current){unsigned int Pos;
       break;}
     HCPCA9685.Servo(left, angle(current-Pos));
     delay(dcontrol2(ranger,Pos));
-    //Serial.println(dcontrol2(ranger,Pos));
-    //delay(1000);
-   //Serial.println("L theta : "+String(current-Pos));
    }
    Current_L_Angle=current-Pos;
    }
@@ -280,18 +246,10 @@ void roll_L_Up(int currentl,int currentr){
     HCPCA9685.Servo(left, angle(currentl+Pos));
     HCPCA9685.Servo(right, angle(currentr+Pos));
     delay(dcontrol2(ranger, Pos));
-     //Serial.println(dcontrol2(ranger,Pos));
-    //delay(1000);
-    //Serial.println("L theta : "+String(currentl+Pos));
-    //Serial.println("R theta : "+String(currentr+Pos));
 }
     else if ((currentl+Pos)<=40){
     HCPCA9685.Servo(left, angle(currentl+Pos));
     delay(dcontrol2(ranger, Pos));
-     //Serial.println(dcontrol2(ranger,Pos));
-    //delay(1000);
-    //Serial.println("L theta : "+String(currentl+Pos));
-
       }
     }
     if((currentr+Pos)<=170){
@@ -318,17 +276,10 @@ void roll_R_Up(int currentl,int currentr){
     HCPCA9685.Servo(left, angle(currentl-Pos));
     HCPCA9685.Servo(right, angle(currentr-Pos));
     delay(dcontrol2(ranger, Pos));
-     //Serial.println(dcontrol2(ranger,Pos));
-    //delay(1000);
-    //Serial.println("L theta* : "+String(currentl-Pos));
-    //Serial.println("R theta : "+String(currentr-Pos));
     }
     else if ((currentr-Pos)>=140){
     HCPCA9685.Servo(right, angle(currentr-Pos));
     delay(dcontrol2(ranger, Pos));
-     //Serial.println(dcontrol2(ranger,Pos));
-    //delay(1000);
-    //Serial.println("R theta : "+String(currentr-Pos));
       }
     }
     
@@ -357,17 +308,11 @@ void pitchUp(int currentl,int currentr){
     {rangep=30;
       break;}
     HCPCA9685.Servo(left, angle(currentl+Pos));
-    //Serial.println("L theta : "+String(currentl+Pos));
     HCPCA9685.Servo(right, angle(currentr-Pos));
-    //Serial.println("R theta : "+String(currentr-Pos));
     delay(dcontrol2(diff,Pos));
-    //Serial.println(dcontrol2(diff,Pos));
     }
-    //delay(1000);
     Current_L_Angle=currentl+Pos;
     Current_R_Angle=currentr-Pos;
-    //Serial.println("Current_L_Angle : "+String(currentl+Pos));
-    //Serial.println("Current_R_Angle : "+String(currentr-Pos));
 }
 void pitchDown(int currentl,int currentr){
   
@@ -378,23 +323,14 @@ void pitchDown(int currentl,int currentr){
     {rangep=0;
       break;}
     HCPCA9685.Servo(left, angle(currentl-Pos));
-       //Serial.println("L theta : "+String(currentl-Pos));
     HCPCA9685.Servo(right, angle(currentr+Pos));
-       //Serial.println("R theta : "+String(currentr+Pos));
     delay(dcontrol2(diff, Pos));
-     //Serial.println(dcontrol2(diff,Pos));
-   // delay(1000);
 }
 Current_L_Angle=currentl-Pos;
     Current_R_Angle=currentr+Pos;
-    //Serial.println("Current_L_Angle : "+String(currentl-Pos));
-    //Serial.println("Current_R_Angle : "+String(currentr+Pos));
 }
 int dcontrol2(int range, int current_pos){
-   ////Serial.println("Range : "+String(range));
    float dtime = range*0.2;
-  // //Serial.println("Current pos : "+String(current_pos));
-  // //Serial.println("Dtime : "+String(dtime));
     if (range<5)
     {
       dtime=acc;
@@ -422,15 +358,11 @@ int dcontrol2(int range, int current_pos){
   {
     HCPCA9685.Servo(left, angle(10+Pos));
     delay(dcontrol2(ranger, Pos));
-     ////Serial.println(dcontrol2(ranger,Pos));
-    ////Serial.println("L theta : "+String(10+Pos));
     }
   for(Pos = 0; Pos <= ranger; Pos++)
   {
     HCPCA9685.Servo(left, angle(10+ranger-Pos));
 
     delay(dcontrol2(ranger, Pos));
-     //Serial.println(dcontrol2(ranger,Pos));
-    //Serial.println("L theta : "+String(10+ranger-Pos));
     }
 }
